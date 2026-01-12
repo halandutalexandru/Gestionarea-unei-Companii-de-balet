@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dansatori</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+<div class="wrap wrap-wide">
+
+    <div class="top-between">
+        <div>
+            <h2 class="page-title">Dansatori</h2>
+
+            <div class="nav-actions">
+                <a href="/home" class="btn btn-muted">Home</a>
+                <a href="/dansatori/new" class="btn">Adauga</a>
+            </div>
+        </div>
+
+        <div></div>
+    </div>
+
+    <div th:if="${msg != null}" class="msg" th:text="${msg}"></div>
+    <div th:if="${err != null}" class="err" th:text="${err}"></div>
+
+    <div class="card">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Nume</th>
+                <th>Prenume</th>
+                <th>CNP</th>
+                <th>Data angajarii</th>
+                <th>Rang</th>
+                <th>Actiuni</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="d : ${rows}">
+                <td th:text="${d.nume}"></td>
+                <td th:text="${d.prenume}"></td>
+                <td th:text="${d.cnp}"></td>
+                <td th:text="${#strings.substring('' + d.data_angajarii,0,4)} + '-' + ${#strings.substring('' + d.data_angajarii,4,6)} + '-' + ${#strings.substring('' + d.data_angajarii,6,8)}"></td>
+                <td th:text="${d.rang}"></td>
+
+                <td class="actions">
+                    <a th:href="@{'/dansatori/edit/' + ${d.id_dansator}}" class="btn">Edit</a>
+
+                    <form class="inline" th:action="@{'/dansatori/delete/' + ${d.id_dansator}}" method="post"
+                          onsubmit="return confirm('Sigur vrei sa stergi dansatorul?');">
+                        <button class="btn btn-danger" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>

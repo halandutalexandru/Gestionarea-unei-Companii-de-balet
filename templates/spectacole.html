@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Spectacole</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+<div class="wrap wrap-wide">
+
+    <div class="top-between">
+        <div>
+            <h2 class="page-title">Spectacole</h2>
+            <div class="nav-actions">
+                <a href="/home" class="btn">Home</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Tip spectacol</th>
+                <th>Data</th>
+                <th>Ora</th>
+                <th>Actiuni</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="r : ${rows}">
+                <td th:text="${r.tip_spectacol}"></td>
+                <td th:text="${#strings.substring('' + r.data_reprezentatie,0,4)} + '-' + ${#strings.substring('' + r.data_reprezentatie,4,6)} + '-' + ${#strings.substring('' + r.data_reprezentatie,6,8)}"></td>
+                <td th:text="${#strings.substring(#numbers.formatInteger(r.ora_inceput,4),0,2)} + ':' + ${#strings.substring(#numbers.formatInteger(r.ora_inceput,4),2,4)}"></td>
+                <td class="actions">
+                    <a th:href="@{'/spectacole/' + ${r.id_reprezentatie} + '/bilete'}" class="btn btn-small">Vezi bilete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>

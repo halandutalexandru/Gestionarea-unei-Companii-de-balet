@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Adauga utilizator</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+<div class="wrap">
+    <div class="top">
+        <a href="/home">← Inapoi</a>
+        <a href="/utilizatori">Utilizatori</a>
+    </div>
+
+    <h2>Adauga utilizator nou</h2>
+
+    <div th:if="${msg != null}" class="msg" th:text="${msg}"></div>
+    <div th:if="${errorMsg != null}" class="err" th:text="${errorMsg}"></div>
+
+    <form th:action="@{/add-user}" method="post" id="addUserForm" autocomplete="off">
+        <label>Username</label>
+        <input type="text" name="username" placeholder="ex: ion.popescu" required>
+
+        <div class="row">
+            <div>
+                <label>Parola</label>
+                <input type="password" name="parola" id="parola" required>
+            </div>
+            <div>
+                <label>Confirma parola</label>
+                <input type="password" id="parola2" required>
+            </div>
+        </div>
+
+        <div class="hint" id="pwHint">Parolele trebuie sa fie identice.</div>
+
+        <label>Rol</label>
+        <select name="grad" id="grad" required>
+            <option value="" disabled selected>Alege rol</option>
+            <option th:each="r : ${roles}" th:value="${r}" th:text="${r}"></option>
+        </select>
+
+        <div id="dansatorBox" class="hidden">
+            <label>Id artist (id_dansator)</label>
+            <input type="number" name="id_dansator" id="id_dansator" min="1">
+            <div class="hint">Doar pentru rolul ARTIST. Introdu manual id-ul existent din tabela Dansatori/Artisti.</div>
+            <div class="hint bad hidden" id="idHint">Pentru rolul ARTIST trebuie completat id-ul.</div>
+        </div>
+
+
+        <button type="submit" class="btn">Adauga</button>
+    </form>
+</div>
+
+<script>
+    (function () {
+        const roleSel = document.getElementById('grad');
+        const dansatorBox = document.getElementById('dansatorBox');
+        const idDansator = document.getElementById('id_dansator');
+        const idHint = document.getElementById('idHint');
+
+        const pw1 = document.getElementById('parola');
+        const pw2 = document.getElementById('parola2');
+        const pwHint = document.getElementById('pwHint');
+        const form = document.getElementById('addUserForm');
+
+        function isDansatorSelected() {
+            return (roleSel.value || '').trim().toUpperCase() === 'ARTIST';
+        }
+
+        function toggleDansator() {
+            const isDansator = isDansatorSelected();
+            dansatorBox.classList.toggle('hidden', !isDansator);
+
+            // daca NU e dansator, golim campul ca sa nu trimitem accidental ceva
+            if (!isDansator) {
+                idDansator.value = '';
+                idHint.classList.add('hidden');
+            }
+        }
+
+        function validatePw() {
+            const ok = pw1.value === pw2.value;
+            pwHint.classList.toggle('ok', ok);
+            pwHint.classList.toggle('bad', !ok);
+            pwHint.textContent = ok ? 'Parolele se potrivesc.' : 'Parolele nu se potrivesc.';
+            return ok;
+        }
+
+        function validateDansatorId() {
+            if (!isDansatorSelected()) return true;
+            const v = (idDansator.value || '').trim();
+            const ok = v !== '' && Number(v) > 0;
+            idHint.classList.toggle('hidden', ok);
+            return ok;
+        }
+
+        roleSel.addEventListener('change', () => {
+            toggleDansator();
+            validateDansatorId();
+        });
+
+        idDansator.addEventListener('input', validateDansatorId);
+        pw1.addEventListener('input', validatePw);
+        pw2.addEventListener('input', validatePw);
+
+        form.addEventListener('submit', (e) => {
+            const okPw = validatePw();
+            const okId = validateDansatorId();
+            if (!okPw) { e.preventDefault(); pw2.focus(); return; }
+            if (!okId) { e.preventDefault(); idDansator.focus(); return; }
+        });
+
+        toggleDansator();
+    })();
+</script>
+
+</body>
+</html>

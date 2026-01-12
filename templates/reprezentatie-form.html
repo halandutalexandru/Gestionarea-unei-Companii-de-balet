@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${edit} ? 'Edit' : 'New'">Form</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+<div class="wrap">
+    <div class="top">
+        <a href="/reprezentatii">← Inapoi</a>
+    </div>
+
+    <h2 th:text="${edit == true} ? 'Edit Reprezentatie' : 'Adauga Reprezentatie'"></h2>
+
+    <form th:action="${edit} ? @{/reprezentatii/edit} : @{/reprezentatii/new}" method="post" autocomplete="off">
+        <input th:if="${edit}" type="hidden" name="id_reprezentatie" th:value="${item.id_reprezentatie}"/>
+
+        <label>Tip reprezentatie</label>
+        <select name="tip_reprezentatie" id="tip_reprezentatie" required>
+            <option value="Spectacol"
+                    th:selected="${#strings.equalsIgnoreCase(#strings.trim(item.tip_reprezentatie), 'Spectacol')}">
+                Spectacol
+            </option>
+            <option value="Repetitie"
+                    th:selected="${#strings.equalsIgnoreCase(#strings.trim(item.tip_reprezentatie), 'Repetitie')}">
+                Repetitie
+            </option>
+        </select>
+
+        <div id="tipSpectacolBox">
+            <label>Tip spectacol (doar daca e Spectacol)</label>
+            <input type="text"
+                   name="tip_spectacol"
+                   id="tip_spectacol"
+                   placeholder="ex: Balet clasic, Contemporan, Gala Speciala"
+                   th:value="${item.tip_spectacol}">
+            <div class="hint">Daca alegi Repetitie, acest camp se ascunde automat.</div>
+        </div>
+
+        <label>Data (YYYYMMDD)</label>
+        <input type="number" name="data_reprezentatie" th:value="${item.data_reprezentatie}" placeholder="20250312" required>
+
+        <label>Ora inceput (HHMM)</label>
+        <input type="number" name="ora_inceput" th:value="${item.ora_inceput}" placeholder="1800" required>
+
+        <label>Ora sfarsit (HHMM)</label>
+        <input type="number" name="ora_sfarsit" th:value="${item.ora_sfarsit}" placeholder="2000" required>
+
+        <label>Sala</label>
+        <select name="id_sala" required>
+            <option th:each="s : ${sali}"
+                    th:value="${s.id_sala}"
+                    th:text="${s.nume_sala}"
+                    th:selected="${s.id_sala == item.id_sala}">
+            </option>
+        </select>
+
+        <button class="btn" type="submit" th:text="${edit} ? 'Salveaza' : 'Adauga'"></button>
+    </form>
+</div>
+
+<script>
+    (function () {
+        const tip = document.getElementById("tip_reprezentatie");
+        const box = document.getElementById("tipSpectacolBox");
+        const ts  = document.getElementById("tip_spectacol");
+
+        function toggleTipSpectacol() {
+            const isSpectacol = tip.value === "Spectacol";
+            box.classList.toggle("hidden", !isSpectacol);
+            ts.disabled = !isSpectacol;
+            if (!isSpectacol) ts.value = "";
+        }
+
+        tip.addEventListener("change", toggleTipSpectacol);
+        toggleTipSpectacol();
+    })();
+</script>
+
+</body>
+</html>
