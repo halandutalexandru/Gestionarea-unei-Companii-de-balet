@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${edit} ? 'Edit Bilet' : 'Adauga Bilet'">Bilet</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+<div class="wrap">
+    <div class="top">
+        <a class="link" href="/bilete">← Inapoi</a>
+    </div>
+
+    <h2 th:text="${edit} ? 'Edit Bilet' : 'Adauga Bilet'">Adauga Bilet</h2>
+
+    <div th:if="${errorMsg != null}" class="err" th:text="${errorMsg}"></div>
+    <div th:if="${msg != null}" class="msg" th:text="${msg}"></div>
+
+    <form th:action="${edit} ? @{/bilete/edit} : @{/bilete/new}" method="post" class="form">
+        <input th:if="${edit}" type="hidden" name="id_bilet" th:value="${item.id_bilet}"/>
+
+        <label>Reprezentatie</label>
+        <select name="id_reprezentatie" required>
+            <option value="" disabled
+                    th:selected="${item == null or item.id_reprezentatie == null}">
+                Alege reprezentatia
+            </option>
+
+            <option th:each="r : ${reps}"
+                    th:value="${r.id_reprezentatie}"
+                    th:selected="${r.id_reprezentatie == item.id_reprezentatie}"
+                    th:text="${(#strings.isEmpty(#strings.trim(r.tip_spectacol)) ? 'Spectacol' : r.tip_spectacol)
+             + ' | ' +
+             #strings.substring('' + r.data_reprezentatie,0,4) + '-' +
+             #strings.substring('' + r.data_reprezentatie,4,6) + '-' +
+             #strings.substring('' + r.data_reprezentatie,6,8) + ' | ' +
+             r.nume_sala}">
+            </option>
+
+        </select>
+
+        <label>Numar loc</label>
+        <input type="number" name="nr_loc" min="1" th:value="${item != null ? item.nr_loc : ''}" required>
+
+        <label>Pret</label>
+        <input type="number" name="pret" min="0" th:value="${item != null ? item.pret : ''}" required>
+
+        <label>Status</label>
+        <select name="status" required>
+            <option value="Liber" th:selected="${item != null and item.status == 'Liber'}">Liber</option>
+            <option value="Rezervat" th:selected="${item != null and item.status == 'Rezervat'}">Rezervat</option>
+            <option value="Vandut" th:selected="${item != null and item.status == 'Vandut'}">Vandut</option>
+        </select>
+
+        <button class="btn" type="submit" th:text="${edit} ? 'Salveaza' : 'Adauga'">Adauga</button>
+    </form>
+</div>
+
+</body>
+</html>

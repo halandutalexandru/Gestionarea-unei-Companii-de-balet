@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+<div class="wrap wrap-wide">
+
+    <div class="top-between">
+        <div>
+            <h2 class="page-title">Dashboard</h2>
+            <div class="nav-actions">
+                <a href="/home" class="btn btn-muted">Home</a>
+            </div>
+        </div>
+        <div></div>
+    </div>
+
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-title">Incasari totale (Vandute)</div>
+            <div class="kpi-value" th:text="${incasariTotal} + ' lei'"></div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-title">Bilete vandute</div>
+            <div class="kpi-value" th:text="${vanduteTotal}"></div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-title">Bilete rezervate</div>
+            <div class="kpi-value" th:text="${rezervateTotal}"></div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-title">Bilete libere</div>
+            <div class="kpi-value" th:text="${libereTotal}"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title">Top 5 reprezentatii dupa incasari</h3>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Tip</th><th>Data</th><th>Ora</th><th>Sala</th><th>Vandute</th><th>Incasari</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${top5}">
+                    <td th:text="${r.tip_reprezentatie}"></td>
+                    <td th:text="${#strings.substring('' + r.data_reprezentatie,0,4)} + '-' + ${#strings.substring('' + r.data_reprezentatie,4,6)} + '-' + ${#strings.substring('' + r.data_reprezentatie,6,8)}"></td>
+                    <td th:text="${#strings.substring(#numbers.formatInteger(r.ora_inceput,4),0,2)} + ':' + ${#strings.substring(#numbers.formatInteger(r.ora_inceput,4),2,4)}"></td>
+                    <td th:text="${r.nume_sala}"></td>
+                    <td th:text="${r.vandute}"></td>
+                    <td th:text="${r.incasari} + ' lei'"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title">Ocupare pe reprezentatie (vandute / capacitate)</h3>
+        <div class="small">Gradul de ocupare este calculat doar din bilete vandute.</div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Tip</th><th>Data</th><th>Sala</th><th>Cap.</th><th>Vandute</th><th>Rez.</th><th>Incasari</th><th>Ocupare</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${ocupare}">
+                    <td th:text="${r.tip_reprezentatie}"></td>
+                    <td th:text="${#strings.substring('' + r.data_reprezentatie,0,4)} + '-' + ${#strings.substring('' + r.data_reprezentatie,4,6)} + '-' + ${#strings.substring('' + r.data_reprezentatie,6,8)}"></td>
+                    <td th:text="${r.nume_sala}"></td>
+                    <td th:text="${r.capacitate}"></td>
+                    <td th:text="${r.vandute}"></td>
+                    <td th:text="${r.rezervate}"></td>
+                    <td th:text="${r.incasari} + ' lei'"></td>
+                    <td th:text="${#numbers.formatDecimal(r.gradOcupareVandute, 1, 1)} + '%'"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title">Incasari pe luna</h3>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                <tr><th>Luna (YYYYMM)</th><th>Incasari</th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="m : ${lunar}">
+                    <td th:text="${m.yyyymm}"></td>
+                    <td th:text="${m.incasari} + ' lei'"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title">Reprezentatii peste media incasarilor (SUBQUERY)</h3>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                <tr><th>Tip</th><th>Data</th><th>Sala</th><th>Vandute</th><th>Incasari</th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${pesteMedie}">
+                    <td th:text="${r.tip_reprezentatie}"></td>
+                    <td th:text="${#strings.substring('' + r.data_reprezentatie,0,4)} + '-' + ${#strings.substring('' + r.data_reprezentatie,4,6)} + '-' + ${#strings.substring('' + r.data_reprezentatie,6,8)}"></td>
+                    <td th:text="${r.nume_sala}"></td>
+                    <td th:text="${r.vandute}"></td>
+                    <td th:text="${r.incasari} + ' lei'"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title">Sponsori: total donatii pe tip</h3>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                <tr><th>Tip sponsor</th><th>Total</th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="s : ${sponsoriTip}">
+                    <td th:text="${s.tip_sponsor}"></td>
+                    <td th:text="${s.total} + ' lei'"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
